@@ -1,0 +1,9 @@
+services:
+  soar:
+    build: .
+    ports: ["8080:8080"]
+    environment:
+      - DRY_RUN=true
+    volumes:
+      - ./.outbox:/app/.outbox
+      - ./.evidence:/app/.evidence

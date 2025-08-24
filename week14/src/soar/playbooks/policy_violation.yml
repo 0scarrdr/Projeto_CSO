@@ -1,0 +1,4 @@
+id: policy_violation
+steps:
+  - action: notify.siem
+    params: { level: medium }
