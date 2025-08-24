@@ -1,0 +1,5 @@
+{"source":"log","message":"failed login from 10.1.2.3 to root","src_ip":"10.1.2.3","host_id":"srv-01","business_criticality":0.9}
+{"source":"network","anomaly_score":0.96,"host_id":"srv-02","dst_port":22,"failed_attempts":100,"src_ip":"203.0.113.9","business_criticality":0.6}
+{"source":"log","message":"malware detected on service payments","host_id":"srv-03","service":"payments"}
+{"source":"log","message":"policy violation by user alice","username":"alice"}
+{"source":"log","message":"suspicious exfiltration to 198.51.100.10 by user bob","username":"bob","dst_ip":"198.51.100.10"}

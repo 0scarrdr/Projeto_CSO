@@ -1,0 +1,6 @@
+id: block_exfiltration
+steps:
+  - action: firewall.block_ip
+    params: { ip: INCIDENT_DST_IP }
+  - action: notify.siem
+    params: { level: critical }

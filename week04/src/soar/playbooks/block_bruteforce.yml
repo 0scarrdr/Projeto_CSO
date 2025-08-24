@@ -1,0 +1,6 @@
+id: block_bruteforce
+steps:
+  - action: firewall.block_ip
+    params: { ip: INCIDENT_SRC_IP }
+  - action: notify.siem
+    params: { level: critical }
