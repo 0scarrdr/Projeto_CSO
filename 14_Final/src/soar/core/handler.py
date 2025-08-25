@@ -1,6 +1,12 @@
 import asyncio, uuid
 from datetime import datetime
 from .incident import Incident
+import time
+from soar.response.orchestrator import ResponseOrchestrator
+from soar.analysis.incident_analyzer import IncidentAnalyzer
+from soar.prediction.threat_predictor import ThreatPredictor
+from soar.metrics.metrics import INCIDENTS_TOTAL, INCIDENT_LATENCY
+from soar.utils.logging import get_logger
 
 class ThreatDetectorIFace:
     def classify(self, event: dict): ...
@@ -12,24 +18,25 @@ class ThreatPredictorIFace:
     async def forecast_related_threats(self, incident: Incident): ...
 
 class IncidentHandler:
-    def __init__(self, detector: ThreatDetectorIFace, analyzer: IncidentAnalyzerIFace,
-                 responder: AutomatedResponderIFace, predictor: ThreatPredictorIFace):
-        self.detector = detector
-        self.analyzer = analyzer
-        self.responder = responder
-        self.predictor = predictor
+    def __init__(self):
+        self.detector = ThreatDetectorIFace()
+        self.analyzer = IncidentAnalyzerIFace()
+        self.responder = AutomatedResponderIFace()
+        self.predictor = ThreatPredictorIFace()
+        self.orchestrator = ResponseOrchestrator()
+        self.analyzer = IncidentAnalyzer()
+        self.predictor = ThreatPredictor()
 
-    async def handle_incident(self, event: dict) -> dict:
-        incident = self.detector.classify(event)
-        if not incident:
-            return {"status": "ignored"}
+    async def handle_incident(self, incident: dict) -> dict:
+        start = time.time()
+        get_logger.info(f"[Handler] Recebido incidente {incident}")
+
         async with asyncio.TaskGroup() as tg:
-            resp_t = tg.create_task(self.responder.execute_playbook(incident))
-            anal_t = tg.create_task(self.analyzer.deep_analysis(incident))
-            pred_t = tg.create_task(self.predictor.forecast_related_threats(incident))
-        return {
-            "incident": incident.__dict__,
-            "response": resp_t.result(),
-            "analysis": anal_t.result(),
-            "prediction": pred_t.result(),
-        }
+            tg.create_task(self.orchestrator.respond(incident))
+            tg.create_task(asyncio.to_thread(self.analyzer.analyze, incident))
+            tg.create_task(asyncio.to_thread(self.predictor.predict_related, incident))
+
+        INCIDENTS_TOTAL.labels(type=incident.get("type")).inc()
+        INCIDENT_LATENCY.observe(time.time() - start)
+
+        return {"status": "completed", "incident": incident}
