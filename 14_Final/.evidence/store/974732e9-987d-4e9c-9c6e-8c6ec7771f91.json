@@ -1,0 +1,1 @@
+{"attributes": {"dst_ip": "198.51.100.10", "message": "suspicious exfiltration to 198.51.100.10 by user bob", "source": "log", "username": "bob"}, "incident_id": "974732e9-987d-4e9c-9c6e-8c6ec7771f91", "ts": "2025-08-25T17:32:51.827915Z", "type": "data_exfiltration"}

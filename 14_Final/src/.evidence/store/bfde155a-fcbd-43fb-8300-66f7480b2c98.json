@@ -1,0 +1,1 @@
+{"attributes": {"message": "policy violation by user alice", "source": "log", "username": "alice"}, "incident_id": "bfde155a-fcbd-43fb-8300-66f7480b2c98", "ts": "2025-08-25T17:51:27.715254Z", "type": "policy_violation"}

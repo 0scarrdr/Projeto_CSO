@@ -1,0 +1,1 @@
+{"attributes": {"anomaly_score": 0.96, "business_criticality": 0.6, "dst_port": 22, "failed_attempts": 100, "host_id": "srv-02", "source": "network", "src_ip": "203.0.113.9"}, "incident_id": "04ad3e9a-a2d1-42af-a91a-c5c409ba1cf2", "ts": "2025-08-25T17:49:08.563623Z", "type": "network_anomaly"}

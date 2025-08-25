@@ -1,0 +1,1 @@
+{"attributes": {"host_id": "srv-03", "message": "malware detected on service payments", "service": "payments", "source": "log"}, "incident_id": "89a74351-f674-4b3f-8532-b3d8172ed23b", "ts": "2025-08-25T17:32:51.801901Z", "type": "malware_alert"}

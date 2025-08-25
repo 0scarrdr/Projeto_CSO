@@ -1,0 +1,1 @@
+{"attributes": {"business_criticality": 0.9, "host_id": "srv-01", "message": "failed login from 10.1.2.3 to root", "source": "log", "src_ip": "10.1.2.3"}, "incident_id": "eb9d4069-027a-4c13-9d1e-3ad8dd420003", "ts": "2025-08-25T17:51:47.188672Z", "type": "brute_force"}
