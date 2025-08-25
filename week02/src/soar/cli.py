@@ -5,7 +5,7 @@ from .core.incident import Incident
 from datetime import datetime
 import uuid
 
-# Dummy implementations to prove the flow (Week 2 only)
+# implementations to prove the flow (Week 2 only)
 class DummyDetector(ThreatDetectorIFace):
     def classify(self, event: dict):
         if "message" in event:
