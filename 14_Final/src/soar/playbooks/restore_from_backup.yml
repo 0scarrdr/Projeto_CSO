@@ -1,0 +1,5 @@
+name: restore_from_backup
+steps:
+  - action: soar.response.actions.recovery.restore_from_backup
+    params:
+      host: INCIDENT_HOST_ID

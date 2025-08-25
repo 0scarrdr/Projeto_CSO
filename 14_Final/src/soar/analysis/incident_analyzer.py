@@ -1,9 +1,40 @@
-from ..core.incident import Incident
-from ..utils.evidence import preserve
+"""
+Incident analysis module: calculates risk score and enriches with CTI.
+"""
+
+import hashlib
+from soar.utils.evidence import EvidenceStore
+from soar.integrations.cti import CTIClient
+from soar.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
+
 class IncidentAnalyzer:
-    async def deep_analysis(self, incident: Incident) -> dict:
-        path = preserve(incident)
-        base = {"low": 0.2,"medium":0.5,"high":0.8,"critical":0.95}[incident.severity]
-        bc = incident.attributes.get("business_criticality", 0.7)
-        risk = min(1.0, base*0.6 + bc*0.4)
-        return {"classification_confidence": min(1.0, base+0.05), "risk_score": round(risk,3), "evidence": path}
+    def __init__(self):
+        self.evidence_store = EvidenceStore()
+        self.cti = CTIClient()
+
+    def _calc_risk(self, incident: dict) -> float:
+        severities = {"low": 0.2, "medium": 0.5, "high": 0.8, "critical": 1.0}
+        base = severities.get(incident.get("severity", "low"), 0.1)
+        context = 0.2 if incident.get("business_critical") else 0.0
+        return round(min(base + context, 1.0), 2)
+
+    def _enrich_cti(self, incident: dict) -> dict:
+        ip = incident.get("src_ip")
+        domain = incident.get("domain")
+        if ip:
+            incident["cti"] = self.cti.check_ip(ip)
+        elif domain:
+            incident["cti"] = self.cti.check_domain(domain)
+        return incident
+
+    def analyze(self, incident: dict) -> dict:
+        incident["risk_score"] = self._calc_risk(incident)
+        incident = self._enrich_cti(incident)
+        # Guardar como evidência
+        incident_hash = hashlib.sha256(str(incident).encode()).hexdigest()
+        self.evidence_store.store("incident", incident, incident_hash)
+        logger.info(f"Incidente analisado {incident.get('id')} risco={incident['risk_score']}")
+        return incident
