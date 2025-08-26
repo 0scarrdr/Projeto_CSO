@@ -6,7 +6,7 @@ import hashlib
 from soar.integrations.cti import CTIClient
 from soar.utils.logging import get_logger
 from ..utils.evidence import EvidenceStore
-
+import traceback
 
 
 logger = get_logger(__name__)
@@ -33,10 +33,16 @@ class IncidentAnalyzer:
         return incident
 
     def analyze(self, incident: dict) -> dict:
-        incident["risk_score"] = self._calc_risk(incident)
-        incident = self._enrich_cti(incident)
-        # Guardar como evidência
-        incident_hash = hashlib.sha256(str(incident).encode()).hexdigest()
-        self.evidence_store.store("incident", incident, incident_hash)
+        try:
+            incident["risk_score"] = self._calc_risk(incident)
+            incident = self._enrich_cti(incident)
+            self.evidence_store.preserve(incident)
+            return incident
+        except Exception as e:
+            logger = get_logger(__name__)
+            logger.error(f"Erro em analyze: {e}\nTraceback:\n{traceback.format_exc()}")
+            raise
+            logger.error(f"Erro em analyze: {e}\nTraceback:\n{traceback.format_exc()}")
+            raise
         logger.info(f"Incidente analisado {incident.get('id')} risco={incident['risk_score']}")
         return incident

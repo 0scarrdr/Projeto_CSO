@@ -2,6 +2,23 @@ import requests
 from soar.utils.logging import logger
 
 class BackupSystem:
+    def restore_backup_azure(self, vm_name):
+        AZURE_BACKUP_API_URL = "https://management.azure.com/subscriptions/<subscription_id>/resourceGroups/<resource_group>/providers/Microsoft.RecoveryServices/vaults/<vault_name>/backupFabrics/Azure/protectionContainers/IaasVMContainer;iaasvmcontainerv2;<vm_name>/protectedItems/VM;iaasvmcontainerv2;<vm_name>/restore?api-version=2021-01-01"
+        AZURE_TOKEN = "<access_token>" # Substitua pelo seu token
+        try:
+            headers = {
+                "Authorization": f"Bearer {AZURE_TOKEN}",
+                "Content-Type": "application/json"
+            }
+            payload = {"vmName": vm_name}
+            url = AZURE_BACKUP_API_URL.replace("<vm_name>", vm_name)
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            logger.info(f"Backup restaurado para {vm_name} via Azure Backup")
+            return {"status": "restored", "host": vm_name}
+        except Exception as e:
+            logger.error(f"Erro ao restaurar backup no Azure: {e}")
+            return {"status": "error", "host": vm_name, "error": str(e)}
     def __init__(self, api_url, token):
         self.api_url = api_url
         self.token = token

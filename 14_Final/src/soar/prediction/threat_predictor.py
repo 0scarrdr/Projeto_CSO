@@ -7,6 +7,7 @@ import pickle
 from collections import deque, Counter
 from pathlib import Path
 from soar.utils.logging import get_logger
+import traceback
 
 logger = get_logger(__name__)
 
@@ -25,7 +26,8 @@ class ThreatPredictor:
                 with open(MODEL_PATH, "rb") as f:
                     self.model = pickle.load(f)
                 logger.info(f"Modelo ML carregado de {MODEL_PATH}")
-            except Exception as e:
+        from soar.utils.logging import get_logger
+        from soar.analysis.ml_model import IncidentMLModel
                 logger.error(f"Falha a carregar modelo ML: {e}")
 
     def update_window(self, incident_type: str):
@@ -36,8 +38,16 @@ class ThreatPredictor:
         If model exists, predict with ML.
         Otherwise, fallback to simple frequency count.
         """
-        self.update_window(current_incident.get("type"))
-
+                self.ml_model = IncidentMLModel()
+        try:
+            self.update_window(current_incident.get("type"))
+            # Adicione aqui lógica de previsão, se necessário
+            return {}
+        except Exception as e:
+                        self.ml_model.load(MODEL_PATH)
+                        logger.info(f"Modelo ML carregado de {MODEL_PATH}")
+                    except Exception as e:
+                        logger.error(f"Falha a carregar modelo ML: {e}")
         if self.model:
             try:
                 features = [[len(self.recent_incidents)]]
