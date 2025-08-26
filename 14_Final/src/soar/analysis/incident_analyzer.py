@@ -3,9 +3,11 @@ Incident analysis module: calculates risk score and enriches with CTI.
 """
 
 import hashlib
-from soar.utils.evidence import EvidenceStore
 from soar.integrations.cti import CTIClient
 from soar.utils.logging import get_logger
+from ..utils.evidence import EvidenceStore
+
+
 
 logger = get_logger(__name__)
 

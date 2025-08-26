@@ -5,14 +5,14 @@ FROM python:3.11-slim
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Diretório de trabalho
-WORKDIR /app
+WORKDIR /14_Final
 
 # Instalar dependências do sistema necessárias para numpy, pandas, scikit-learn
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
     g++ \
-    libatlas-base-dev \
+    libopenblas-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Copiar requirements primeiro (para cache de layers)
@@ -23,6 +23,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 # Copiar código da aplicação
 COPY . .
+
+# Adicionar src ao Python path
+ENV PYTHONPATH=/14_Final/src
 
 # Expor porta da API
 EXPOSE 8000
