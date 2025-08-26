@@ -7,6 +7,8 @@ import pickle
 from collections import deque, Counter
 from pathlib import Path
 from soar.utils.logging import get_logger
+from soar.utils.logging import get_logger
+from soar.analysis.ml_model import IncidentMLModel
 import traceback
 
 logger = get_logger(__name__)
@@ -26,8 +28,7 @@ class ThreatPredictor:
                 with open(MODEL_PATH, "rb") as f:
                     self.model = pickle.load(f)
                 logger.info(f"Modelo ML carregado de {MODEL_PATH}")
-        from soar.utils.logging import get_logger
-        from soar.analysis.ml_model import IncidentMLModel
+            except Exception as e:
                 logger.error(f"Falha a carregar modelo ML: {e}")
 
     def update_window(self, incident_type: str):
