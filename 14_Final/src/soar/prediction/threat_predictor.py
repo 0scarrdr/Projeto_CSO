@@ -39,7 +39,7 @@ class ThreatPredictor:
         If model exists, predict with ML.
         Otherwise, fallback to simple frequency count.
         """
-            self.ml_model = IncidentMLModel()
+    self.ml_model = IncidentMLModel()
         try:
             self.update_window(current_incident.get("type"))
             # Adicione aqui lógica de previsão, se necessário
