@@ -66,7 +66,7 @@ class IncidentHandler:
             response_result = response_task.result()
             analysis_result = analysis_task.result()
             prediction_result = prediction_task.result()
-        except* Exception as exc:
+        except Exception as exc:
             tb = traceback.format_exc()
             logger.error(f"Erro em TaskGroup: {exc}\nTraceback:\n{tb}")
             errors.append(f"{exc}\nTraceback:\n{tb}")
