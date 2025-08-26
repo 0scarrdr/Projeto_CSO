@@ -1,0 +1,55 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "SOAR Monitoring",
+    "tags": ["soar", "prometheus"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "type": "stat",
+        "title": "Incidentes Processados",
+        "targets": [
+          {
+            "expr": "sum(soar_incidents_total)",
+            "legendFormat": "Total"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 6, "h": 4 }
+      },
+      {
+        "type": "graph",
+        "title": "Incidentes por Tipo",
+        "targets": [
+          {
+            "expr": "soar_incidents_total",
+            "legendFormat": "{{type}}"
+          }
+        ],
+        "gridPos": { "x": 6, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Latência de Processamento",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, sum(rate(soar_incident_latency_seconds_bucket[5m])) by (le))",
+            "legendFormat": "p95 Latência"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "type": "graph",
+        "title": "Ações Executadas",
+        "targets": [
+          {
+            "expr": "soar_actions_total",
+            "legendFormat": "{{action}}"
+          }
+        ],
+        "gridPos": { "x": 12, "y": 8, "w": 12, "h": 8 }
+      }
+    ]
+  },
+  "overwrite": true
+}

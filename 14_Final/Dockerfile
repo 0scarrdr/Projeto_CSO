@@ -1,8 +1,31 @@
+# Imagem base leve
 FROM python:3.11-slim
+
+# Evita mensagens interativas durante builds
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Diretório de trabalho
 WORKDIR /app
-COPY requirements.txt ./
+
+# Instalar dependências do sistema necessárias para numpy, pandas, scikit-learn
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    gcc \
+    g++ \
+    libatlas-base-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copiar requirements primeiro (para cache de layers)
+COPY requirements.txt .
+
+# Instalar dependências Python
 RUN pip install --no-cache-dir -r requirements.txt
+
+# Copiar código da aplicação
 COPY . .
-ENV DRY_RUN=true
-EXPOSE 8080
-CMD ["uvicorn", "src.soar.api:app", "--host", "0.0.0.0", "--port", "8080"]
+
+# Expor porta da API
+EXPOSE 8000
+
+# Comando de arranque (FastAPI app com reload desligado para produção)
+CMD ["uvicorn", "src.soar.api:app", "--host", "0.0.0.0", "--port", "8000"]

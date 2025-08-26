@@ -1,20 +1,31 @@
-import time
+import requests
 from soar.utils.logging import logger
 
 class CloudManager:
-    def __init__(self, config):
-        self.config = config
+    def __init__(self, api_url, token):
+        self.api_url = api_url
+        self.token = token
 
     def block_account(self, account_id):
-        logger.info(f"[Cloud] Blocking account {account_id}")
-        # Simulação de bloqueio de conta
-        time.sleep(1)
-        logger.info(f"[Cloud] Account {account_id} blocked")
-        return {"account_id": account_id, "status": "blocked"}
+        url = f"{self.api_url}/accounts/{account_id}/block"
+        headers = {"Authorization": f"Bearer {self.token}"}
+        try:
+            response = requests.post(url, headers=headers)
+            response.raise_for_status()
+            logger.info(f"[Cloud] Account {account_id} blocked via API.")
+            return response.json()
+        except requests.RequestException as e:
+            logger.error(f"[Cloud] Failed to block account: {e}")
+            return {"error": str(e)}
 
     def restore_service(self, service_id):
-        logger.info(f"[Cloud] Restoring service {service_id}")
-        # Simulação de restauração de serviço
-        time.sleep(2)
-        logger.info(f"[Cloud] Service {service_id} restored")
-        return {"service_id": service_id, "status": "restored"}
+        url = f"{self.api_url}/services/{service_id}/restore"
+        headers = {"Authorization": f"Bearer {self.token}"}
+        try:
+            response = requests.post(url, headers=headers)
+            response.raise_for_status()
+            logger.info(f"[Cloud] Service {service_id} restored via API.")
+            return response.json()
+        except requests.RequestException as e:
+            logger.error(f"[Cloud] Failed to restore service: {e}")
+            return {"error": str(e)}
