@@ -2,6 +2,19 @@ import requests
 from soar.utils.logging import logger
 
 class EDRClient:
+    def execute_response(self, incident):
+        host_id = incident.get("host_id")
+        action = incident.get("action")
+        if not host_id or not action:
+            logger.error("[EDR] Incident missing host_id or action for response.")
+            return {"error": "Missing host_id or action"}
+        if action == "isolate":
+            return self.isolate_host(host_id)
+        elif action == "quarantine":
+            return self.rollback_host(host_id)
+        else:
+            logger.error(f"[EDR] Unknown action: {action}")
+            return {"error": f"Unknown action: {action}"}
     def rollback_host(self, host_id):
         url = f"{self.api_url}/hosts/{host_id}/isolate"
         headers = {"Authorization": f"Bearer {self.api_key}"}

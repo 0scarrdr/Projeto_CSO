@@ -1,3 +1,17 @@
+import requests
+
+AZURE_FIREWALL_API_URL = "https://management.azure.com/subscriptions/405650f3-310c-4f72-b8ea-81e0c5764c85/resourceGroups/ProjetoCSO/providers/Microsoft.Network/azureFirewalls/Firewall/blockIP?api-version=2022-05-01"
+AZURE_TOKEN = "eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsIng1dCI6IkpZaEFjVFBNWl9MWDZEQmxPV1E3SG4wTmVYRSIsImtpZCI6IkpZaEFjVFBNWl9MWDZEQmxPV1E3SG4wTmVYRSJ9.eyJhdWQiOiJodHRwczovL21hbmFnZW1lbnQuYXp1cmUuY29tLyIsImlzcyI6Imh0dHBzOi8vc3RzLndpbmRvd3MubmV0LzZiZmRiMzE4LThkZmEtNGQ0Yy1hZTU1LWMwODYyYWE2YTViMS8iLCJpYXQiOjE3NTYyNTU1NjgsIm5iZiI6MTc1NjI1NTU2OCwiZXhwIjoxNzU2MjYwODczLCJhY3IiOiIxIiwiYWlvIjoiQVVRQXUvOFpBQUFBTURwWDVNRlBMR2VNWTlIR0VtZHZtb1l1OGF2NzdkQkdvWnhoZ1RURXRsdi9XUyswekU2OWhVL3BrUlFPQ1o5eXpOZm84UXhJUTdjbDZFb21RY0Zjc1E9PSIsImFtciI6WyJwd2QiLCJyc2EiXSwiYXBwaWQiOiIwNGIwNzc5NS04ZGRiLTQ2MWEtYmJlZS0wMmY5ZTFiZjdiNDYiLCJhcHBpZGFjciI6IjAiLCJkZXZpY2VpZCI6ImZlZjU0YzljLWIzNmItNDc0NS04NzZkLThmZDQzYTBkMTQ4OSIsImlkdHlwIjoidXNlciIsImlwYWRkciI6IjQ1Ljg3LjIxMi4xODQiLCJuYW1lIjoiT3NjYXIgUmFmYWVsIERpYXMgUm9kcmlndWVzIiwib2lkIjoiN2E0N2FkMmYtOGI4MS00NTBmLThiMTEtZGRkNWFiY2IwMWY1Iiwib25wcmVtX3NpZCI6IlMtMS01LTIxLTQyNzk2ODA2MTAtMzEwNzc2NjcxMi0zMDgzNTEyNjEyLTIwNDkxIiwicHVpZCI6IjEwMDMyMDAxOENBQTY0NjciLCJwd2RfdXJsIjoiaHR0cHM6Ly9wb3J0YWwubWljcm9zb2Z0b25saW5lLmNvbS9DaGFuZ2VQYXNzd29yZC5hc3B4IiwicmgiOiIxLkFYb0FHTFA5YV9xTlRFMnVWY0NHS3FhbHNVWklmM2tBdXRkUHVrUGF3ZmoyTUJQbUFGQjZBQS4iLCJzY3AiOiJ1c2VyX2ltcGVyc29uYXRpb24iLCJzaWQiOiIxZTJjYmJjNi0zNDAyLTQ2MmYtODRiYS1jN2E5MjFjMmJiZTkiLCJzdWIiOiJoVWlKdEc4Q2ttTVl5STdrNHB1cHZFOEFsNXNVRldQdTI1Y05oV3IwSlY0IiwidGlkIjoiNmJmZGIzMTgtOGRmYS00ZDRjLWFlNTUtYzA4NjJhYTZhNWIxIiwidW5pcXVlX25hbWUiOiJwdjIzMDIwQGFsdW5vcy5lc3Rndi5pcHYucHQiLCJ1cG4iOiJwdjIzMDIwQGFsdW5vcy5lc3Rndi5pcHYucHQiLCJ1dGkiOiJqcl9ndjVSdlJFeWdGN0NBRkRvYUFBIiwidmVyIjoiMS4wIiwid2lkcyI6WyJiNzlmYmY0ZC0zZWY5LTQ2ODktODE0My03NmIxOTRlODU1MDkiXSwieG1zX2Z0ZCI6IlJBQWNyd2VPUVFEbnZOZHhpdXdjd1FPVWJBT3VQdWV2QzJwajdGVzBXUW9CYzNkbFpHVnVZeTFrYzIxeiIsInhtc19pZHJlbCI6IjYgMSIsInhtc190Y2R0IjoxNDYxNjgxNjg5fQ.EMAGUWbpHXHn4TAvFjzH4qzXNi6x5swUPYGHWH2uwUWRlyl9aMkUXbtHwTmaX0xFBqDZOjXk7De_puiQIuAoRJcl1To6rT1STZHZHYJVTNCUAFM7a7nk7_ImowJ3ql8GzvQVQJO9_iTXVai3Q2njbjoDr83fJojy8gnUPxeBHR_UTsKHJRBizyU3AkxCDks0Z60CbR9Y0d7Clid9KOgcpjOTAl8fy_sSvsDcyYtMoTGUp77QcXVmX2nD-NQs5KcD5OB-G7t88QUkHcnYZC9q-NugWdqmXDDnrETwZvZnm493NjdoUu8PU-aa3jXQTFYu1Mr_scSeLLcM8yaQbbOwBA"
+
 def block_ip(incident, ip: str):
-    # Week 4: dry-run output only
-    return {"dry_run": True, "ip": ip}
+    try:
+        headers = {
+            "Authorization": f"Bearer {AZURE_TOKEN}",
+            "Content-Type": "application/json"
+        }
+        payload = {"ip": ip}
+        response = requests.post(AZURE_FIREWALL_API_URL, headers=headers, json=payload)
+        response.raise_for_status()
+        return {"ok": True, "ip": ip}
+    except Exception as e:
+        return {"ok": False, "error": str(e), "ip": ip}
