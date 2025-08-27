@@ -54,6 +54,54 @@ class AutomatedResponderIFace:
             host = incident.get("host")
             result = backup.restore_backup(host, backup_id=None)
             return {"backup_restore": result}
+        elif incident.get("action") == "suspend_account":
+            user_id = incident.get("user_id")
+            from soar.integrations.account import suspend_account
+            result = suspend_account(user_id)
+            return {"account_suspension": result}
+        elif incident.get("action") == "preserve_evidence":
+            file_path = incident.get("evidence_path")
+            from soar.integrations.evidence import preserve_evidence
+            result = preserve_evidence(file_path, incident.get("id"))
+            return {"evidence_preservation": result}
+        elif incident.get("action") == "apply_patch":
+            runbook = incident.get("runbook")
+            parameters = incident.get("parameters")
+            from soar.integrations.patch import apply_patch
+            result = apply_patch(runbook_name=runbook, parameters=parameters)
+            return {"patch_management": result}
+        elif incident.get("action") == "notify_user":
+            user_id = incident.get("user_id")
+            subject = incident.get("subject")
+            body = incident.get("body")
+            from soar.integrations.notify import notify_user
+            result = notify_user(user_id, subject or f"Alerta de Segurança: Incidente {incident.get('id')}", body or str(incident))
+            return {"user_notification": result}
+        elif incident.get("action") == "verify_config":
+            file_path = incident.get("config_path")
+            from soar.integrations.config_verify import verify_config
+            result = verify_config(file_path)
+            return {"config_verification": result}
+        elif incident.get("action") == "restore_system":
+            # Dispatcher: tenta restaurar via backup, cloud ou serviço
+            from soar.integrations.Backup import BackupSystem
+            from soar.integrations.Cloud import CloudProvider, CloudManager
+            backup = BackupSystem(api_url="https://management.azure.com", token="<YOUR_AZURE_TOKEN>")
+            cloud = CloudProvider()
+            cloud_mgr = CloudManager(api_url="https://management.azure.com", token="<YOUR_AZURE_TOKEN>")
+            host = incident.get("host")
+            vm_id = incident.get("vm_id")
+            service_id = incident.get("service_id")
+            if host:
+                result = backup.restore_backup(host, backup_id=None)
+                return {"system_restoration": result}
+            elif vm_id:
+                result = cloud.rollback_vm(vm_id)
+                return {"system_restoration": result}
+            elif service_id:
+                result = cloud_mgr.restore_service(service_id)
+                return {"system_restoration": result}
+            return {"system_restoration": "No restoration action triggered"}
         return {"response": "No action triggered"}
 class ThreatPredictorIFace:
     async def forecast_related_threats(self, incident: Incident): ...
@@ -99,11 +147,14 @@ class IncidentHandler:
                 response_task = tg.create_task(self.orchestrator.execute({}, incident_obj))
                 analysis_task = tg.create_task(asyncio.to_thread(self.analyzer.analyze, incident))
                 prediction_task = tg.create_task(asyncio.to_thread(self.predictor.predict_related, incident))
-                
+                # Previsão ML
+                from soar.analysis.threat_predictor_ml import ThreatPredictorML
+                ml_predictor = ThreatPredictorML()
+                features = [1 if incident.get('type') == 'malware' else 0, incident.get('severity', 1)]
+                ml_prediction = ml_predictor.predict(features)
                 response_result = response_task.result()
                 analysis_result = analysis_task.result()
                 prediction_result = prediction_task.result()
-
         except Exception as exc:
             tb = traceback.format_exc()
             logger.error(f"Erro em TaskGroup: {exc}\nTraceback:\n{tb}")
@@ -118,10 +169,16 @@ class IncidentHandler:
 
         if errors:
             return {"status": "error", "incident": incident, "errors": errors}
+        # Gerar relatório automático
+        from soar.integrations.report import generate_incident_report
+        results = self.compile_results(response_result, analysis_result, prediction_result)
+        report = generate_incident_report(incident, results)
         # Devolver resultados agregados
         return {
             "status": "completed",
             "incident": incident,
             "cti": cti_result,
-            "results": self.compile_results(response_result, analysis_result, prediction_result)
+            "results": results,
+            "ml_prediction": ml_prediction,
+            "report": report
         }

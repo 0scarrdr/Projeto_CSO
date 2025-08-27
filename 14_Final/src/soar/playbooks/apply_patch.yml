@@ -1,0 +1,9 @@
+name: apply_patch
+steps:
+  - action: soar.response.actions.patch.patch
+    params:
+      runbook: INCIDENT_RUNBOOK
+      parameters: INCIDENT_PARAMETERS
+  - action: notify.siem
+    params:
+      level: info

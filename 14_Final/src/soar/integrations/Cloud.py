@@ -16,38 +16,46 @@ class CloudProvider:
     def rollback_vm(self, vm_id: str):
         # Exemplo: listar VMs e simular rollback
         vms = list(self.client.virtual_machines.list_all())
-        for vm in vms:
-            if vm.name == vm_id:
-                # Aqui pode chamar snapshot/restore real
-                logger.info(f"Rollback VM {vm_id}")
-                return {"status": "rolled_back", "vm_id": vm_id}
-        return {"status": "not_found", "vm_id": vm_id}
+        import requests
+        from dotenv import load_dotenv
+        import os
 
-class CloudManager:
-    def __init__(self, api_url, token):
-        self.api_url = api_url
-        self.token = token
+        load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../../../.env'))
+        AZURE_SUBSCRIPTION_ID = os.getenv("AZURE_SUBSCRIPTION_ID")
+        AZURE_RESOURCE_GROUP = os.getenv("AZURE_RESOURCE_GROUP")
+        AZURE_TOKEN = os.getenv("AZURE_TOKEN")
+        AZURE_API_BASE = os.getenv("AZURE_API_BASE")
 
-    def block_account(self, account_id):
-        url = f"{self.api_url}/accounts/{account_id}/block"
-        headers = {"Authorization": f"Bearer {self.token}"}
-        try:
-            response = requests.post(url, headers=headers)
-            response.raise_for_status()
-            logger.info(f"[Cloud] Account {account_id} blocked via API.")
-            return response.json()
-        except requests.RequestException as e:
-            logger.error(f"[Cloud] Failed to block account: {e}")
-            return {"error": str(e)}
+        class AzureCloudManager:
+            def __init__(self, token=AZURE_TOKEN, subscription_id=AZURE_SUBSCRIPTION_ID, resource_group=AZURE_RESOURCE_GROUP):
+                self.token = token
+                self.subscription_id = subscription_id
+                self.resource_group = resource_group
+                self.headers = {
+                    "Authorization": f"Bearer {self.token}",
+                    "Content-Type": "application/json"
+                }
 
-    def restore_service(self, service_id):
-        url = f"{self.api_url}/services/{service_id}/restore"
-        headers = {"Authorization": f"Bearer {self.token}"}
-        try:
-            response = requests.post(url, headers=headers)
-            response.raise_for_status()
-            logger.info(f"[Cloud] Service {service_id} restored via API.")
-            return response.json()
-        except requests.RequestException as e:
-            logger.error(f"[Cloud] Failed to restore service: {e}")
-            return {"error": str(e)}
+            def list_vms(self):
+                url = f"{AZURE_API_BASE}/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Compute/virtualMachines?api-version=2022-08-01"
+                response = requests.get(url, headers=self.headers)
+                response.raise_for_status()
+                return response.json()
+
+            def start_vm(self, vm_name):
+                url = f"{AZURE_API_BASE}/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Compute/virtualMachines/{vm_name}/start?api-version=2022-08-01"
+                response = requests.post(url, headers=self.headers)
+                response.raise_for_status()
+                return response.status_code == 202
+
+            def stop_vm(self, vm_name):
+                url = f"{AZURE_API_BASE}/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Compute/virtualMachines/{vm_name}/powerOff?api-version=2022-08-01"
+                response = requests.post(url, headers=self.headers)
+                response.raise_for_status()
+                return response.status_code == 202
+
+            def get_vm_status(self, vm_name):
+                url = f"{AZURE_API_BASE}/subscriptions/{self.subscription_id}/resourceGroups/{self.resource_group}/providers/Microsoft.Compute/virtualMachines/{vm_name}/instanceView?api-version=2022-08-01"
+                response = requests.get(url, headers=self.headers)
+                response.raise_for_status()
+                return response.json()

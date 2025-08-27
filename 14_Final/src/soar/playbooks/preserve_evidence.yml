@@ -1,0 +1,8 @@
+name: preserve_evidence
+steps:
+  - action: soar.response.actions.evidence.preserve_incident_evidence
+    params:
+      file_path: INCIDENT_EVIDENCE_PATH
+  - action: notify.siem
+    params:
+      level: info

@@ -1,10 +1,14 @@
 import requests
+from dotenv import load_dotenv
+import os
 from soar.utils.logging import logger
+
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../../../.env'))
+AZURE_BACKUP_API_URL = os.getenv("AZURE_BACKUP_API_URL")
+AZURE_TOKEN = os.getenv("AZURE_TOKEN")
 
 class BackupSystem:
     def restore_backup_azure(self, vm_name):
-        AZURE_BACKUP_API_URL = "https://management.azure.com/subscriptions/<subscription_id>/resourceGroups/<resource_group>/providers/Microsoft.RecoveryServices/vaults/<vault_name>/backupFabrics/Azure/protectionContainers/IaasVMContainer;iaasvmcontainerv2;<vm_name>/protectedItems/VM;iaasvmcontainerv2;<vm_name>/restore?api-version=2021-01-01"
-        AZURE_TOKEN = "<access_token>" # Substitua pelo seu token
         try:
             headers = {
                 "Authorization": f"Bearer {AZURE_TOKEN}",

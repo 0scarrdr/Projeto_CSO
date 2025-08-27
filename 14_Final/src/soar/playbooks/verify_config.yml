@@ -1,0 +1,8 @@
+name: verify_config
+steps:
+  - action: soar.response.actions.config_verify.verify_config_action
+    params:
+      file_path: INCIDENT_CONFIG_PATH
+  - action: notify.siem
+    params:
+      level: info

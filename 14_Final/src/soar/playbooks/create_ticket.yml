@@ -1,0 +1,10 @@
+name: create_ticket
+steps:
+  - action: soar.response.actions.ticket.create_ticket_action
+    params:
+      system: INCIDENT_TICKET_SYSTEM
+      summary: INCIDENT_SUMMARY
+      description: INCIDENT_DESCRIPTION
+  - action: notify.siem
+    params:
+      level: info

@@ -2,11 +2,14 @@
 Patch Management integration: aplica patches/configuração via Azure Automation.
 """
 import requests
+from dotenv import load_dotenv
+import os
 from soar.utils.logging import get_logger
 
 logger = get_logger(__name__)
-AZURE_AUTOMATION_API_URL = "https://management.azure.com/subscriptions/<subscription_id>/resourceGroups/<resource_group>/providers/Microsoft.Automation/automationAccounts/<account_name>/runbooks/<runbook_name>/start?api-version=2017-05-15-preview"
-AZURE_TOKEN = "<access_token>" # Substitua pelo seu token
+load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../../../.env'))
+AZURE_AUTOMATION_API_URL = os.getenv("AZURE_AUTOMATION_API_URL")
+AZURE_TOKEN = os.getenv("AZURE_TOKEN")
 
 def apply_patch(runbook_name, parameters=None):
     url = AZURE_AUTOMATION_API_URL.replace("<runbook_name>", runbook_name)

@@ -17,9 +17,12 @@ CTI_FILE = DATA_DIR / "cti_blacklist.json"
 
 class CTIClient:
     def __init__(self, source: str = None, abuseipdb_api_key: str = None):
+        from dotenv import load_dotenv
+        import os
+        load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '../../../.env'))
         self.source = source or str(CTI_FILE)
         self.indicators = self._load_indicators()
-        self.abuseipdb_api_key = abuseipdb_api_key
+        self.abuseipdb_api_key = abuseipdb_api_key or os.getenv("ABUSEIPDB_API_KEY")
 
     def _load_indicators(self):
         if os.path.exists(self.source):
