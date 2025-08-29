@@ -1,6 +1,40 @@
-id: block_exfiltration
+name: "Block Data Exfiltration"
+description: "Automated response to data exfiltration attempts"
+version: "1.0"
+triggers:
+  - incident_type: "data_breach"
+  - incident_type: "data_exfiltration"
+
 steps:
-  - action: firewall.block_ip
-    params: { ip: INCIDENT_DST_IP }
-  - action: notify.siem
-    params: { level: critical }
+  - name: "Block Destination IP"
+    action: "network.block_ip"
+    params:
+      ip_address: "INCIDENT_DESTINATION_IP"
+      duration: 86400  # 24 hours
+  
+  - name: "Isolate Source Host"
+    action: "network.isolate_host"
+    params:
+      host_id: "INCIDENT_SOURCE_SYSTEM"
+  
+  - name: "Disable User Account"
+    action: "system.disable_user"
+    params:
+      username: "INCIDENT_USERNAME"
+  
+  - name: "Send Critical Alert"
+    action: "alert.send_alert"
+    params:
+      severity: "critical"
+      recipients: ["soc@company.com", "data-protection@company.com", "legal@company.com"]
+  
+  - name: "Notify All Security Teams"
+    action: "alert.notify_teams"
+    params:
+      teams: ["SOC", "Incident_Response", "Data_Protection", "Legal"]
+      escalation_level: "critical"
+  
+  - name: "Create Critical Ticket"
+    action: "alert.create_ticket"
+    params:
+      priority: "critical"

@@ -1,0 +1,47 @@
+name: "Ransomware Recovery"
+description: "Immediate containment, user isolation, and restore from last good backup"
+version: "1.0"
+triggers:
+  - flow_type: "ransomware"
+
+steps:
+  - name: "Emergency Isolation"
+    action: "cloud.emergency_network_isolation"
+
+  - name: "Block Malicious IPs"
+    action: "network.block_ip"
+    params:
+      ip_address: "INCIDENT_SOURCE_IP"
+      duration: 172800
+
+  - name: "Disable Affected User"
+    action: "cloud.disable_user_account"
+    params:
+      username: "INCIDENT_USERNAME"
+
+  - name: "EDR Host Isolation"
+    action: "system.isolate_host_edr"
+    params:
+      host_id: "INCIDENT_SOURCE_SYSTEM"
+
+  - name: "Trigger Backup Now"
+    action: "cloud.trigger_vm_backup"
+    params:
+      vm_name: "INCIDENT_SOURCE_SYSTEM"
+
+  - name: "Restore From Backup"
+    action: "cloud.restore_vm_backup"
+    params:
+      vm_name: "INCIDENT_SOURCE_SYSTEM"
+
+  - name: "Verify and Harden"
+    action: "system.harden_system"
+    params:
+      host_id: "INCIDENT_SOURCE_SYSTEM"
+      profile: "CIS_Hardening"
+
+  - name: "Notify and Ticket"
+    action: "alert.create_ticket"
+    params:
+      priority: "critical"
+      category: "ransomware"

@@ -1,8 +1,40 @@
 global:
-  scrape_interval: 5s
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  # - "soar_rules.yml"
 
 scrape_configs:
+  # SOAR Application metrics
   - job_name: "soar"
     metrics_path: /metrics
     static_configs:
       - targets: ["soar:8000"]
+    scrape_interval: 5s
+
+  # Prometheus self-monitoring
+  - job_name: "prometheus"
+    static_configs:
+      - targets: ["localhost:9090"]
+
+  # Node Exporter for system metrics
+  - job_name: "node-exporter"
+    static_configs:
+      - targets: ["node-exporter:9100"]
+
+  # cAdvisor for container metrics
+  - job_name: "cadvisor"
+    static_configs:
+      - targets: ["cadvisor:8080"]
+
+  # Elasticsearch metrics
+  - job_name: "elasticsearch"
+    static_configs:
+      - targets: ["elasticsearch:9200"]
+    metrics_path: "/_prometheus/metrics"
+
+  # Redis metrics (if exporter is available)
+  - job_name: "redis"
+    static_configs:
+      - targets: ["redis:6379"]

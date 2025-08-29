@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-08-29T09:16:16.396876",
+  "duration_seconds": 19.24593734741211,
+  "total_suites": 8,
+  "passed_suites": 0,
+  "failed_suites": 8,
+  "success_rate": 0.0,
+  "results": {
+    "test_core.py": {
+      "returncode": 2,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    },
+    "test_detection.py": {
+      "returncode": 2,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    },
+    "test_analysis.py": {
+      "returncode": 2,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    },
+    "test_response.py": {
+      "returncode": 2,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    },
+    "test_prediction.py": {
+      "returncode": 2,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    },
+    "integration": {
+      "returncode": 2,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    },
+    "api": {
+      "returncode": 2,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    },
+    "performance": {
+      "returncode": 4,
+      "stdout": null,
+      "stderr": null,
+      "success": false
+    }
+  }
+}

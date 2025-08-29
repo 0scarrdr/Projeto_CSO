@@ -1,0 +1,302 @@
+{
+  "dashboard": {
+    "id": null,
+    "title": "SOAR Performance Metrics - Compliance Dashboard",
+    "description": "Dashboard para monitorizar compliance com os targets de performance especificados no enunciado",
+    "tags": ["soar", "security", "performance", "compliance"],
+    "timezone": "browser",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Detection Time (Target: <60s)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(soar_detection_time_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 45},
+                {"color": "red", "value": 60}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "Response Time (Target: <300s)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(soar_response_time_seconds_bucket[5m]))",
+            "legendFormat": "95th percentile"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s",
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 240},
+                {"color": "red", "value": 300}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0}
+      },
+      {
+        "id": 3,
+        "title": "False Positive Rate (Target: <0.1%)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "soar_false_positive_rate",
+            "legendFormat": "Current Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "decimals": 3,
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 0.05},
+                {"color": "red", "value": 0.1}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0}
+      },
+      {
+        "id": 4,
+        "title": "System Status",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "up{job=\"soar\"}",
+            "legendFormat": "SOAR API"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "mappings": [
+              {"options": {"0": {"text": "DOWN"}}, "type": "value"},
+              {"options": {"1": {"text": "UP"}}, "type": "value"}
+            ],
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "green", "value": 1}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0}
+      },
+      {
+        "id": 5,
+        "title": "Containment Success Rate (Target: >95%)",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "soar_containment_success_rate",
+            "legendFormat": "Success Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 90},
+                {"color": "green", "value": 95}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 0, "y": 4}
+      },
+      {
+        "id": 6,
+        "title": "Recovery Accuracy (Target: >99%)",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "soar_recovery_accuracy_rate",
+            "legendFormat": "Accuracy"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 95},
+                {"color": "green", "value": 99}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 8, "y": 4}
+      },
+      {
+        "id": 7,
+        "title": "Evidence Preservation (Target: 100%)",
+        "type": "gauge",
+        "targets": [
+          {
+            "expr": "soar_evidence_preservation_rate",
+            "legendFormat": "Preservation Rate"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "min": 0,
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 99},
+                {"color": "green", "value": 100}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 8, "x": 16, "y": 4}
+      },
+      {
+        "id": 8,
+        "title": "Analysis Accuracy Targets",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "soar_classification_accuracy_rate",
+            "legendFormat": "Classification (>95%)"
+          },
+          {
+            "expr": "soar_risk_assessment_accuracy_rate",
+            "legendFormat": "Risk Assessment (>90%)"
+          },
+          {
+            "expr": "soar_prediction_accuracy_rate",
+            "legendFormat": "Prediction (>85%)"
+          },
+          {
+            "expr": "soar_pattern_recognition_rate",
+            "legendFormat": "Pattern Recognition (>90%)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                {"color": "red", "value": null},
+                {"color": "yellow", "value": 80},
+                {"color": "green", "value": 90}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 6, "w": 24, "x": 0, "y": 12}
+      },
+      {
+        "id": 9,
+        "title": "Incident Processing Rate",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(soar_incidents_total[5m])",
+            "legendFormat": "Incidents/min - {{type}}"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "short"
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 18}
+      },
+      {
+        "id": 10,
+        "title": "Resource Utilization",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "soar_resource_utilization_percent{resource_type=\"cpu\"}",
+            "legendFormat": "CPU Usage %"
+          },
+          {
+            "expr": "soar_resource_utilization_percent{resource_type=\"memory\"}",
+            "legendFormat": "Memory Usage %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "max": 100,
+            "thresholds": {
+              "steps": [
+                {"color": "green", "value": null},
+                {"color": "yellow", "value": 70},
+                {"color": "red", "value": 90}
+              ]
+            }
+          }
+        },
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 18}
+      },
+      {
+        "id": 11,
+        "title": "Performance Timeline",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "histogram_quantile(0.95, rate(soar_detection_time_seconds_bucket[5m]))",
+            "legendFormat": "Detection Time (95th)"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(soar_response_time_seconds_bucket[5m]))",
+            "legendFormat": "Response Time (95th)"
+          },
+          {
+            "expr": "histogram_quantile(0.95, rate(soar_incident_latency_seconds_bucket[5m]))",
+            "legendFormat": "Total Latency (95th)"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "s"
+          }
+        },
+        "gridPos": {"h": 8, "w": 24, "x": 0, "y": 26}
+      }
+    ],
+    "time": {
+      "from": "now-1h",
+      "to": "now"
+    },
+    "refresh": "5s",
+    "schemaVersion": 30,
+    "version": 2
+  }
+}

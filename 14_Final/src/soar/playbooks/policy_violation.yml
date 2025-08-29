@@ -1,4 +1,35 @@
-id: policy_violation
+name: "Policy Violation Response"
+description: "Automated response to policy violations"
+version: "1.0"
+triggers:
+  - incident_type: "policy_violation"
+
 steps:
-  - action: notify.siem
-    params: { level: medium }
+  - name: "Send Policy Alert"
+    action: "alert.send_alert"
+    params:
+      severity: "low"
+      recipients: ["soc@company.com", "compliance@company.com"]
+  
+  - name: "Notify Compliance Team"
+    action: "alert.notify_teams"
+    params:
+      teams: ["SOC", "Compliance"]
+      escalation_level: "standard"
+  
+  - name: "Create Compliance Ticket"
+    action: "alert.create_ticket"
+    params:
+      priority: "low"
+  
+  - name: "Verify Configuration"
+    action: "system.verify_configuration"
+    params:
+      host_id: "INCIDENT_SOURCE_SYSTEM"
+      baseline: "CIS_Level1"
+  
+  - name: "Apply Hardening (if needed)"
+    action: "system.harden_system"
+    params:
+      host_id: "INCIDENT_SOURCE_SYSTEM"
+      profile: "CIS_Hardening"

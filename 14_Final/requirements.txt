@@ -16,4 +16,12 @@ requests==2.32.3
 prometheus-client==0.20.0
 pytest==8.3.2
 elasticsearch==8.12.1
+psutil==5.9.8
+python-dotenv==1.0.0
+azure-identity==1.15.0
+azure-mgmt-network==25.2.0
+azure-mgmt-resource==23.0.1
+azure-mgmt-compute==32.0.0
+azure-mgmt-recoveryservices==3.0.0
+azure-mgmt-recoveryservicesbackup==9.1.0
 

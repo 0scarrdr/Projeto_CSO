@@ -1,8 +1,0 @@
-name: cloud_vm_rollback
-steps:
-  - action: soar.response.actions.cloud.rollback_vm
-    params:
-      vm_id: INCIDENT_VM_ID
-  - action: notify.siem
-    params:
-      level: info

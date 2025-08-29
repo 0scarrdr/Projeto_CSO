@@ -1,6 +1,30 @@
-id: block_bruteforce
+name: "Block Brute Force Attack"
+description: "Automated response to brute force attacks"
+version: "1.0"
+triggers:
+  - incident_type: "brute_force"
+  - incident_type: "network_attack"
+
 steps:
-  - action: firewall.block_ip
-    params: { ip: INCIDENT_SRC_IP }
-  - action: notify.siem
-    params: { level: critical }
+  - name: "Block Source IP"
+    action: "network.block_ip"
+    params:
+      ip_address: "INCIDENT_SOURCE_IP"
+      duration: 7200  # 2 hours
+  
+  - name: "Send High Priority Alert"
+    action: "alert.send_alert"
+    params:
+      severity: "high"
+      recipients: ["soc@company.com", "security-admin@company.com"]
+  
+  - name: "Notify Security Teams"
+    action: "alert.notify_teams"
+    params:
+      teams: ["SOC", "Network_Security"]
+      escalation_level: "immediate"
+  
+  - name: "Create Incident Ticket"
+    action: "alert.create_ticket"
+    params:
+      priority: "high"

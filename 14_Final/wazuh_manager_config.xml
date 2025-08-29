@@ -1,0 +1,240 @@
+# Configuração Otimizada do Wazuh Manager
+# Salve este arquivo como /var/ossec/etc/ossec.conf
+
+<ossec_config>
+  <global>
+    <jsonout_output>yes</jsonout_output>
+    <alerts_log>yes</alerts_log>
+    <logall>no</logall>
+    <logall_json>no</logall_json>
+    <email_notification>no</email_notification>
+    <smtp_server>smtp.example.wazuh.com</smtp_server>
+    <email_from>wazuh@example.wazuh.com</email_from>
+    <email_to>recipient@example.wazuh.com</email_to>
+    <email_maxperhour>12</email_maxperhour>
+    <email_log_source>alerts.log</email_log_source>
+    <stats>1800</stats>
+    <memory_size>1024</memory_size>
+  </global>
+
+  <alerts>
+    <log_alert_level>3</log_alert_level>
+    <email_alert_level>12</email_alert_level>
+  </alerts>
+
+  <logging>
+    <log_format>plain</log_format>
+    <log_format>json</log_format>
+  </logging>
+
+  <!-- Configuração de clusters (se aplicável) -->
+  <cluster>
+    <name>wazuh-cluster</name>
+    <node_name>wazuh-manager-node</node_name>
+    <node_type>master</node_type>
+    <key>your_cluster_key_here</key>
+    <port>1516</port>
+    <bind_addr>0.0.0.0</bind_addr>
+    <nodes>
+      <node>wazuh-manager-ip</node>
+    </nodes>
+    <hidden>no</hidden>
+    <disabled>yes</disabled>
+  </cluster>
+
+  <!-- Regras de detecção -->
+  <rules>
+    <include>rules_config.xml</include>
+    <include>pci_dss_10.2.4.xml</include>
+    <include>pci_dss_10.2.5.xml</include>
+    <include>pci_dss_10.2.6.xml</include>
+    <include>pci_dss_10.2.7.xml</include>
+    <include>pci_dss_10.2.8.xml</include>
+    <include>pci_dss_10.2.9.xml</include>
+    <include>pci_dss_10.3.1.xml</include>
+    <include>pci_dss_10.3.2.xml</include>
+    <include>pci_dss_10.3.3.xml</include>
+    <include>pci_dss_10.3.4.xml</include>
+    <include>pci_dss_10.3.5.xml</include>
+    <include>pci_dss_10.3.6.xml</include>
+    <include>pci_dss_10.4.1.xml</include>
+    <include>pci_dss_10.4.2.xml</include>
+    <include>pci_dss_10.4.3.xml</include>
+    <include>pci_dss_10.4.4.xml</include>
+    <include>pci_dss_10.4.5.xml</include>
+    <include>pci_dss_10.5.1.xml</include>
+    <include>pci_dss_10.5.2.xml</include>
+    <include>pci_dss_10.5.3.xml</include>
+    <include>pci_dss_10.5.4.xml</include>
+    <include>pci_dss_10.5.5.xml</include>
+    <include>pci_dss_10.6.1.xml</include>
+    <include>pci_dss_10.6.2.xml</include>
+    <include>pci_dss_10.6.3.xml</include>
+    <include>pci_dss_11.4.xml</include>
+    <include>pci_dss_11.5.xml</include>
+    <include>cis_debian2012L1.xml</include>
+    <include>cis_debian2012L2.xml</include>
+    <include>cis_rhel5_linux_rcl.xml</include>
+    <include>cis_rhel6_linux_rcl.xml</include>
+    <include>cis_rhel7_linux_rcl.xml</include>
+    <include>cis_rhel8_linux_rcl.xml</include>
+    <include>cis_sles11_linux_rcl.xml</include>
+    <include>cis_sles12_linux_rcl.xml</include>
+    <include>cis_ubuntu14-04L1.xml</include>
+    <include>cis_ubuntu14-04L2.xml</include>
+    <include>cis_ubuntu16-04L1.xml</include>
+    <include>cis_ubuntu16-04L2.xml</include>
+    <include>cis_ubuntu18-04L1.xml</include>
+    <include>cis_ubuntu18-04L2.xml</include>
+    <include>cis_win2012r2_domainL1.xml</include>
+    <include>cis_win2012r2_domainL2.xml</include>
+    <include>cis_win2012r2_memberL1.xml</include>
+    <include>cis_win2012r2_memberL2.xml</include>
+    <include>cis_win2016_domainL1.xml</include>
+    <include>cis_win2016_domainL2.xml</include>
+    <include>cis_win2016_memberL1.xml</include>
+    <include>cis_win2016_memberL2.xml</include>
+    <include>cis_win2019_domainL1.xml</include>
+    <include>cis_win2019_domainL2.xml</include>
+    <include>cis_win2019_memberL1.xml</include>
+    <include>cis_win2019_memberL2.xml</include>
+    <include>sca.xml</include>
+    <include>sshd.xml</include>
+    <include>apache.xml</include>
+    <include>nginx.xml</include>
+    <include>web_appsec.xml</include>
+    <include>attack.xml</include>
+    <include>authentication_failed.xml</include>
+    <include>authentication_success.xml</include>
+    <include>firewall.xml</include>
+    <include>ids.xml</include>
+    <include>openvas.xml</include>
+    <include>pfSense.xml</include>
+    <include>suricata.xml</include>
+    <include>selinux.xml</include>
+    <include>syslog.xml</include>
+    <include>systemd.xml</include>
+    <include>vsftpd.xml</include>
+    <include>windows.xml</include>
+    <include>local_rules.xml</include>
+  </rules>
+
+  <!-- Decoders -->
+  <decoder>
+    <name>json</name>
+  </decoder>
+
+  <decoder_dir>etc/decoders</decoder_dir>
+
+  <!-- Configuração de agentes -->
+  <remote>
+    <connection>secure</connection>
+    <port>1514</port>
+    <protocol>tcp</protocol>
+    <queue_size>131072</queue_size>
+  </remote>
+
+  <!-- Configuração de logs -->
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/auth.log</location>
+  </localfile>
+
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/syslog</location>
+  </localfile>
+
+  <localfile>
+    <log_format>syslog</log_format>
+    <location>/var/log/dpkg.log</location>
+  </localfile>
+
+  <!-- SCA (Security Configuration Assessment) -->
+  <sca>
+    <enabled>yes</enabled>
+    <scan_on_start>yes</scan_on_start>
+    <interval>12h</interval>
+    <skip_nfs>yes</skip_nfs>
+  </sca>
+
+  <!-- Syscheck (File Integrity Monitoring) -->
+  <syscheck>
+    <disabled>no</disabled>
+    <frequency>43200</frequency>
+    <scan_on_start>yes</scan_on_start>
+    <alert_new_files>yes</alert_new_files>
+
+    <!-- Diretórios para monitorar -->
+    <directories check_all="yes" realtime="yes">/etc,/usr/bin,/usr/sbin</directories>
+    <directories check_all="yes" realtime="yes">/bin,/sbin,/boot</directories>
+
+    <!-- Arquivos de configuração importantes -->
+    <directories check_all="yes">/var/ossec/etc</directories>
+
+    <!-- Ignorar arquivos temporários -->
+    <ignore>/etc/mtab</ignore>
+    <ignore>/etc/hosts.deny</ignore>
+    <ignore>/etc/mail/statistics</ignore>
+    <ignore>/etc/random-seed</ignore>
+    <ignore>/etc/random.seed</ignore>
+    <ignore>/etc/adjtime</ignore>
+    <ignore>/etc/httpd/logs</ignore>
+    <ignore>/etc/utmpx</ignore>
+    <ignore>/etc/wtmpx</ignore>
+    <ignore>/etc/cups/certs</ignore>
+    <ignore>/etc/dumpdates</ignore>
+    <ignore>/etc/svc/volatile</ignore>
+
+    <!-- Verificar permissões -->
+    <check_dev>yes</check_dev>
+    <check_files>yes</check_files>
+    <check_if>yes</check_if>
+    <check_md5sum>yes</check_md5sum>
+    <check_sha1sum>yes</check_sha1sum>
+    <check_size>yes</check_size>
+    <check_owner>yes</check_owner>
+    <check_group>yes</check_group>
+    <check_perm>yes</check_perm>
+  </syscheck>
+
+  <!-- Rootcheck -->
+  <rootcheck>
+    <disabled>no</disabled>
+    <check_files>yes</check_files>
+    <check_trojans>yes</check_trojans>
+    <check_dev>yes</check_dev>
+    <check_sys>yes</check_sys>
+    <check_pids>yes</check_pids>
+    <check_ports>yes</check_ports>
+    <check_if>yes</check_if>
+    <frequency>36000</frequency>
+  </rootcheck>
+
+  <!-- Configuração de comandos ativos -->
+  <command>
+    <name>disable-account</name>
+    <executable>disable-account</executable>
+    <expect>user</expect>
+    <timeout_allowed>yes</timeout_allowed>
+  </command>
+
+  <command>
+    <name>restart-ossec</name>
+    <executable>restart-ossec</executable>
+    <timeout_allowed>yes</timeout_allowed>
+  </command>
+
+  <command>
+    <name>firewall-drop</name>
+    <executable>firewall-drop</executable>
+    <expect>srcip</expect>
+    <timeout_allowed>yes</timeout_allowed>
+  </command>
+
+  <!-- Configuração de alertas -->
+  <alerts>
+    <email_alerts>no</email_alerts>
+  </alerts>
+
+</ossec_config>

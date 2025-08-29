@@ -1,34 +1,35 @@
-# Imagem base leve
-FROM python:3.11-slim
+# Multi-stage build para otimização
+FROM python:3.11-slim as builder
 
-# Evita mensagens interativas durante builds
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Diretório de trabalho
-WORKDIR /14_Final
-
-# Instalar dependências do sistema necessárias para numpy, pandas, scikit-learn
+# Instalar dependências de build
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     gcc \
-    g++ \
-    libopenblas-dev \
     && rm -rf /var/lib/apt/lists/*
 
-# Copiar requirements primeiro (para cache de layers)
+# Copiar e instalar dependências
 COPY requirements.txt .
+RUN pip install --no-cache-dir --user -r requirements.txt
 
-# Instalar dependências Python
-RUN pip install --no-cache-dir -r requirements.txt
+# Imagem final
+FROM python:3.11-slim
+
+# Copiar dependências instaladas
+COPY --from=builder /root/.local /root/.local
+
+# Configurar diretório de trabalho
+WORKDIR /app
 
 # Copiar código da aplicação
-COPY . .
+COPY src/ ./src/
+COPY *.yml ./
 
-# Adicionar src ao Python path
-ENV PYTHONPATH=/14_Final/src
+# Configurar Python path
+ENV PYTHONPATH=/app/src
+ENV PATH=/root/.local/bin:$PATH
 
-# Expor porta da API
+# Expor porta
 EXPOSE 8000
 
-# Comando de arranque (FastAPI app com reload desligado para produção)
-CMD ["uvicorn", "src.soar.api:app", "--host", "0.0.0.0", "--port", "8000"]
+# Comando de inicialização
+CMD ["python", "-m", "uvicorn", "soar.api.app:app", "--host", "0.0.0.0", "--port", "8000"]

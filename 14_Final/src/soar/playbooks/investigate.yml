@@ -1,6 +1,24 @@
-id: investigate
+name: "Investigate Network Anomaly"
+description: "Investigation workflow for network anomalies"
+version: "1.0"
+triggers:
+  - incident_type: "network_anomaly"
+  - incident_type: "zero_day"
+
 steps:
-  - action: isolation.isolate_host
-    params: { host_id: INCIDENT_HOST_ID }
-  - action: notify.siem
-    params: { level: high }
+  - name: "Send Investigation Alert"
+    action: "alert.send_alert"
+    params:
+      severity: "medium"
+      recipients: ["soc@company.com"]
+  
+  - name: "Notify SOC Team"
+    action: "alert.notify_teams"
+    params:
+      teams: ["SOC", "Network_Security"]
+      escalation_level: "standard"
+  
+  - name: "Create Investigation Ticket"
+    action: "alert.create_ticket"
+    params:
+      priority: "medium"

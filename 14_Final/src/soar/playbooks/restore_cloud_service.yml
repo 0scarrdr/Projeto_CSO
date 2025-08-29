@@ -1,8 +1,0 @@
-name: restore_cloud_service
-steps:
-  - action: soar.response.actions.cloud.restore_service
-    params:
-      service_id: INCIDENT_SERVICE_ID
-  - action: notify.siem
-    params:
-      level: info

@@ -1,8 +1,0 @@
-name: suspend_user_account
-steps:
-  - action: soar.response.actions.account.suspend_user_account
-    params:
-      user_id: INCIDENT_USER_ID
-  - action: notify.siem
-    params:
-      level: critical
